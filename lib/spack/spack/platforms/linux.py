@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import platform
+
 from spack.architecture import Platform, Target
 from spack.operating_systems.linux_distro import LinuxDistro
 
@@ -16,7 +17,9 @@ class Linux(Platform):
         self.add_target('x86_64', Target('x86_64'))
         self.add_target('ppc64le', Target('ppc64le'))
 
-        self.default = platform.machine()
+        if self.default is None:
+            self.default = platform.machine()
+
         self.front_end = platform.machine()
         self.back_end = platform.machine()
 
