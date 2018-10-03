@@ -29,7 +29,7 @@ class Paraview(CMakePackage):
 
     variant('plugins', default=True,
             description='Install include files for plugins support')
-    variant('python', default=False, description='Enable Python support')
+    variant('python', default=True, description='Enable Python support')
     variant('mpi', default=True, description='Enable MPI support')
     variant('osmesa', default=False, description='Enable OSMesa support')
     variant('qt', default=False, description='Enable Qt (gui) support')
@@ -37,7 +37,10 @@ class Paraview(CMakePackage):
     variant('examples', default=False, description="Build examples")
     variant('hdf5', default=False, description="Use external HDF5")
 
-    depends_on('python@2:2.8', when='+python')
+    depends_on('python@:2.99', when='@:5.4.1+python')
+
+    # python 3 support is experimental from @5.5, should be complete in @5.6:
+    depends_on('python', when='@5.5.2:+python')
     depends_on('py-numpy', when='+python', type=('build', 'run'))
     depends_on('py-mpi4py', when='+python+mpi', type=('build', 'run'))
     # Matplotlib >2.x requires Python 3
@@ -63,8 +66,8 @@ class Paraview(CMakePackage):
     depends_on('libpng')
     depends_on('libtiff')
     depends_on('libxml2')
-    depends_on('netcdf')
     depends_on('expat')
+    # depends_on('netcdf')
     # depends_on('netcdf-cxx')
     # depends_on('protobuf') # version mismatches?
     # depends_on('sqlite') # external version not supported
@@ -172,6 +175,7 @@ class Paraview(CMakePackage):
             '-DVTK_USE_SYSTEM_NETCDF:BOOL=ON',
             '-DVTK_USE_SYSTEM_EXPAT:BOOL=ON',
             '-DVTK_USE_SYSTEM_TIFF:BOOL=ON',
+            '-DVTK_USE_SYSTEM_EXPAT:BOOL=ON',
             '-DVTK_USE_SYSTEM_ZLIB:BOOL=ON',
             '-DOpenGL_GL_PREFERENCE:STRING=LEGACY'
         ]
@@ -186,7 +190,10 @@ class Paraview(CMakePackage):
         if '+python' in spec:
             cmake_args.extend([
                 '-DPARAVIEW_ENABLE_PYTHON:BOOL=ON',
-                '-DPYTHON_EXECUTABLE:FILEPATH=%s' % spec['python'].command.path
+                '-DPYTHON_EXECUTABLE:FILEPATH={0}'.format(
+                    spec['python'].command.path),
+                '-DVTK_PYTHON_VERSION:STRING={0}'.format(
+                    spec['python'].version.up_to(1))
             ])
 
         if '+mpi' in spec:
