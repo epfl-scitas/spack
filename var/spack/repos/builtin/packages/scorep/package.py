@@ -72,7 +72,13 @@ class Scorep(AutotoolsPackage):
         config_args = [
             "--with-otf2=%s" % spec['otf2'].prefix.bin,
             "--with-opari2=%s" % spec['opari2'].prefix.bin,
+            "--with-cube=%s" % spec['cube'].prefix.bin,
+            "--with-papi-header=%s" % spec['papi'].prefix.include,
+            "--with-papi-lib=%s" % spec['papi'].prefix.lib,
             "--enable-shared"]
+
+        if '+pdt' in spec:
+            config_args.append("--with-pdt=%s" % spec['pdt'].prefix.bin)
 
         cname = spec.compiler.name
         config_args.append('--with-nocross-compiler-suite={0}'.format(cname))
