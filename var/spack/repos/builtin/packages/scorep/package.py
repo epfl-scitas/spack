@@ -41,8 +41,6 @@ class Scorep(AutotoolsPackage):
     version('1.4.2', '3b9a042b13bdd5836452354e6567f71e')
     version('1.3',   '9db6f957b7f51fa01377a9537867a55c')
 
-    patch('gcc7.patch', when='%gcc@7:')
-
     depends_on('cube')
     ##########
     # Dependencies for SCORE-P are quite tight. See the homepage for more
@@ -67,9 +65,11 @@ class Scorep(AutotoolsPackage):
 
     depends_on("mpi")
     depends_on("papi")
-    depends_on('pdt')
 
     variant('shmem', default=False, description='Enable shmem tracing')
+    variant('pdt', default=False, description='Enable pdt automatic instrumentation')
+
+    depends_on('pdt', when='+pdt')
 
     # Score-P requires a case-sensitive file system, and therefore
     # does not work on macOS
@@ -85,8 +85,10 @@ class Scorep(AutotoolsPackage):
             "--with-cube=%s" % spec['cube'].prefix.bin,
             "--with-papi-header=%s" % spec['papi'].prefix.include,
             "--with-papi-lib=%s" % spec['papi'].prefix.lib,
-            "--with-pdt=%s" % spec['pdt'].prefix.bin,
             "--enable-shared"]
+
+        if '+pdt' in spec:
+            config_args.append("--with-pdt=%s" % spec['pdt'].prefix.bin)
 
         cname = spec.compiler.name
         config_args.append('--with-nocross-compiler-suite={0}'.format(cname))
