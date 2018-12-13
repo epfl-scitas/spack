@@ -128,6 +128,11 @@ class Cp2k(MakefilePackage):
         ])
         return os.path.join('arch', makefile_basename)
 
+    def setup_environment(self, spack_env, run_env):
+        # The trailing slash in the data_path has to be there.
+        data_path = os.path.join(self.prefix, 'data{0}'.format(os.path.sep))
+        run_env.set('CP2K_DATA_DIR', data_path)
+
     @property
     def archive_files(self):
         return [os.path.join(self.stage.source_path, self.makefile)]
@@ -318,6 +323,17 @@ class Cp2k(MakefilePackage):
             fcflags += ['$(shell pkg-config --cflags json-fortran)']
             libs += ['$(shell pkg-config --libs json-fortran)']
 
+            ldflags.append(libxc.libs.search_flags)
+
+            libs.extend([str(x) for x in (fftw, lapack, blas)])
+
+            if libxc.satisfies('@4.0:'):
+                libs.extend([join_path(spec['libxc'].prefix.lib, 'libxcf03.a'),
+                            join_path(spec['libxc'].prefix.lib, 'libxc.a')])
+            elif libxc.satisfies('@:3.99'):
+                libs.extend([join_path(spec['libxc'].prefix.lib, 'libxcf90.a'),
+                            join_path(spec['libxc'].prefix.lib, 'libxc.a')])
+
         if 'smm=libsmm' in spec:
             lib_dir = os.path.join(
                 'lib', self.makefile_architecture, self.makefile_version
@@ -405,6 +421,9 @@ class Cp2k(MakefilePackage):
         ]
 
     def build(self, spec, prefix):
+        # Copy the DATA directory to the final destination before make
+        shutil.copytree('data', self.prefix.data)
+
         # Apparently the Makefile bases its paths on PWD
         # so we need to set PWD = self.build_directory
         with spack.util.environment.set_env(PWD=self.build_directory):
