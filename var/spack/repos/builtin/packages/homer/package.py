@@ -29,7 +29,6 @@ class Homer(Package):
     def install(self, spec, prefix):
         # initialize homer directories
         basedir = join_path(prefix.lib, 'homer')
-        #mkdirp(basedir)
 
         install_tree('.', basedir)
 
