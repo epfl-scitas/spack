@@ -31,6 +31,8 @@ class RLambdaR(RPackage):
        matching, guard statements, built-in (optional) type safety."""
 
     homepage = "https://cran.rstudio.com/web/packages/lambda.r/index.html"
-    url      = "https://cran.rstudio.com/src/contrib/lambda.r_1.2.tar.gz"
+    #url      = "https://cran.rstudio.com/src/contrib/lambda.r_1.2.tar.gz"
+    url = "https://cran.r-project.org/src/contrib/Archive/lambda.r/lambda.r_1.2.tar.gz"
 
+    #version('1.2.3', '662f16f71a65366e0492d43ad1523db7')
     version('1.2', 'bda49898b85ad5902880a31f43b432e2')

@@ -1,52 +1,52 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack import *
+from os import symlink
 
 
-class Homer(MakefilePackage):
-    """	HOMER (Hypergeometric Optimization of Motif EnRichment) is a suite of
-        tools for Motif Discovery and next-gen sequencing analysis."""
+class Homer(Package):
+    """Software for motif discovery and next generation sequencing analysis"""
 
     homepage = "http://homer.ucsd.edu/homer"
-    url      = "http://homer.ucsd.edu/homer/data/software/homer.v4.10.3.zip"
+    url      = "http://homer.ucsd.edu/homer/data/software/homer.v4.9.zip"
 
-    version('4.9.1', 'ed5742bf69b72fc92810a2e2fb0fd129')
+    version('4.9.1', sha256='ad1303b0b0400dc8a88dbeae1ee03a94631977b751a3d335326c4febf0eec3a9')
 
-    depends_on('zip')
+    depends_on('perl', type=('build', 'run'))
+    depends_on('r-biocgenerics', type='run')
+    depends_on('r-biocparallel', type='run')
+    depends_on('r-edger', type='run')
+    depends_on('r-deseq2', type='run')
 
-    def edit(self, spec, prefix):
-        with working_dir("cpp", create=False):
-            makefile = FileFilter('Makefile')
-            makefile.filter('COMPILER = .*', 'COMPILER = c++')
-
-    def build(self, spec, prefix):
-        with working_dir("cpp"):
-            make('clean')
-            make()
+    variant('data', default=False,
+            description='Download genome data packages')
+    variant('custom', default=False,
+            description='hg19,mm9,mm10 options needed by EPL')
 
     def install(self, spec, prefix):
-        install_tree(join_path(self.stage.source_path, 'bin'),
-                     self.prefix.bin)
+        # initialize homer directories
+        basedir = join_path(prefix.lib, 'homer')
+        #mkdirp(basedir)
+
+        install_tree('.', basedir)
+
+        # symlink bin so it is included in the PATH
+        symlink(join_path(basedir, 'bin'), prefix.bin)
+
+        # override homer base directory in configure script
+        filter_file('my $homeDir = $1;',
+                    'my $homeDir = \"{0}\";'.format(basedir),
+                    'configureHomer.pl', string=True)
+
+        # compile/prepare binaries and perl scripts with the correct paths
+        perl = which('perl')
+        perl('configureHomer.pl', '-local')
+
+        # download extra data if requested
+        if '+data' in spec:
+            perl('configureHomer.pl', '-install', '-all')
+        if '+custom' in spec:
+            perl('configureHomer.pl', '-install', 'hg19', 'mm9', 'mm10')
