@@ -7,7 +7,11 @@ from spack import *
 
 
 class Tophat(AutotoolsPackage):
-    """Spliced read mapper for RNA-Seq."""
+    """TopHat is a fast splice junction read mapper for RNA-Seq.
+
+     It aligns RNA-Seq reads to mammalian-sized genomes using the ultra
+     high-throughput short read aligner Bowtie, and then analyzes the
+     the mapping results to identify splice junctions between exons."""
 
     homepage = "http://ccb.jhu.edu/software/tophat/index.shtml"
     url      = "https://github.com/infphilo/tophat/archive/v2.1.1.tar.gz"
@@ -26,6 +30,11 @@ class Tophat(AutotoolsPackage):
 
     depends_on('boost@1.47:')
     depends_on('bowtie2', type='run')
+
+    # uses make_pair which changed signature with C++14
+    # a patch exists: https://github.com/DaehwanKimLab/tophat/pull/38
+    # but there might be unexpected side effects
+    conflicts('%gcc@6:')
 
     parallel = False
 
