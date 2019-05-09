@@ -34,7 +34,7 @@ class Tophat(AutotoolsPackage):
     # uses make_pair which changed signature with C++14
     # a patch exists: https://github.com/DaehwanKimLab/tophat/pull/38
     # but there might be unexpected side effects
-    conflicts('%gcc@6:')
+    # conflicts('%gcc@6:')
 
     parallel = False
 
