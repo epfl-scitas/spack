@@ -35,6 +35,7 @@ class Vcftools(AutotoolsPackage):
     homepage = "https://vcftools.github.io/"
     url      = "https://github.com/vcftools/vcftools/releases/download/v0.1.14/vcftools-0.1.14.tar.gz"
 
+    version('0.1.16', '89a181b26d6b992147c0c4e6681739f8')
     # this is "a pre-release"
     # version('0.1.15', '61045197848dea20a0158d2faf02e5be')
     version('0.1.14', 'a110662535651caa6cc8c876216a9f77')
