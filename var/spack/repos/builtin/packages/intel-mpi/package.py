@@ -3,6 +3,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os.path
+
 from spack import *
 from spack.environment import EnvironmentModifications
 from spack.util.prefix import Prefix
