@@ -102,7 +102,8 @@ class Hpl(AutotoolsPackage):
     @when('@2.3:')
     def configure_args(self):
         config = [
-            'CFLAGS=-O3'
+            'CFLAGS=-O3',
+            'CC={0}'.format(self.spec['mpi'].mpicc)
         ]
 
         return config
