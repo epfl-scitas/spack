@@ -57,6 +57,31 @@ class Kahip(SConsPackage):
         """Internal compile.sh scripts hardcode number of cores to build with.
         Filter these out so Spack can control it."""
 
+        compiler = self.compiler
+        filter_file(r'-fopenmp',
+                    '{0}'.format(compiler.openmp_flag),
+                    'SConstruct')
+        filter_file('-std=c\+\+0x',
+                    '{0}'.format(compiler.cxx11_flag),
+                    'SConstruct')
+        for f in ['SConscript',
+                  'parallel/modified_kahip/SConscript',
+                  'parallel/parallel_src/SConscript',
+                  'interface/SConscript']:
+            filter_file(r', *\'gomp\'(, *\'mpi\')?',
+                        '], LINKFLAGS=[\'{0}\''.format(compiler.openmp_flag),
+                        f)
+
+        filter_file('CXXFLAGS = \'',
+                    'CXXFLAGS = \'{0} '.format(compiler.openmp_flag),
+                    'SConscript')
+        filter_file('import sys',
+                    'import sys\nimport os',
+                    'SConscript')
+        filter_file('Import\(\'env\'\)',
+                    """Import('env')\nenv['CXX'] = os.environ['CXX']""",
+                    'SConscript')
+
         files = [
             'compile.sh',
             'parallel/modified_kahip/compile.sh',
@@ -65,9 +90,9 @@ class Kahip(SConsPackage):
 
         for f in files:
             filter_file('NCORES=.*', 'NCORES={0}'.format(make_jobs), f)
-
+            
     def build(self, spec, prefix):
-        """Build using the KaHIP compile.sh script. Uses scons internally."""
+        """Build using the KaHIP compile.sh script. Uses scons internally."""       
         builder = Executable('./compile.sh')
         builder()
 
