@@ -62,6 +62,7 @@ import glob
 import re
 import shutil
 import os
+import platform as plt
 
 from spack import *
 from spack.environment import EnvironmentModifications
@@ -758,7 +759,7 @@ class OpenfoamArch(object):
         platform = spec.architecture.platform
 
         # spec.architecture.target is like `uname -m`
-        target   = spec.architecture.target
+        target   = plt.machine()
 
         if platform == 'linux':
             if target == 'i686':
