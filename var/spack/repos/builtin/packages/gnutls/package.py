@@ -28,6 +28,7 @@ class Gnutls(AutotoolsPackage):
     variant('zlib', default=True, description='Enable zlib compression support')
     variant('guile', default=True, description='Enable Guile bindings')
 
+    depends_on('autogen', when='%intel')
     # Note that version 3.3.9 of gnutls doesn't support nettle 3.0.
     depends_on('nettle@3.4.1:', when='@3.6.7.1:')
     depends_on('guile', when='+guile')

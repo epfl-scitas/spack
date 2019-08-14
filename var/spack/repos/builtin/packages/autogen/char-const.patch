@@ -1,0 +1,12 @@
+--- a/autoopts/save.c
++++ b/autoopts/save.c
+@@ -312,7 +312,7 @@ prt_value(FILE * fp, int depth, tOptDesc * od, tOptionValue const * ovp)
+             uint32_t  opt_state = od->fOptState;
+             uintptr_t val = od->optArg.argEnum;
+             char const * typ = (ovp->valType == OPARG_TYPE_ENUMERATION)
+-                ? "keyword" : "set-membership";
++                ? (char const *) "keyword" : (char const *) "set-membership";
+ 
+             fprintf(fp, TYPE_ATR_FMT, ovp->pzName, typ);
+ 
+-- 
