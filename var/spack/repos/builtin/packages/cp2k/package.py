@@ -421,9 +421,6 @@ class Cp2k(MakefilePackage):
         ]
 
     def build(self, spec, prefix):
-        # Copy the DATA directory to the final destination before make
-        shutil.copytree('data', self.prefix.data)
-
         # Apparently the Makefile bases its paths on PWD
         # so we need to set PWD = self.build_directory
         with spack.util.environment.set_env(PWD=self.build_directory):
