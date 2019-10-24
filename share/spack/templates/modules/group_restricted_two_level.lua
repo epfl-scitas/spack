@@ -1,13 +1,5 @@
-{% extends "modules/modulefile.lua" %}
+{% extends "modules/group_restricted.lua" %}
 {% block footer %}
--- Access is granted only to specific groups, most likely because the software is licensed
-if not isDir("{{ spec.prefix }}") then
-    LmodError (
-        "You don't have the necessary rights to run \"{{ spec.name }}\".\n\n",
-        "\tPlease write an e-mail to 1234@epfl.ch if you need further information on how to get access to it.\n"
-    )
-end
-
 -- Perform a second check to see if read access is granted to the
 -- "{{ spec.prefix }}" directory.
 -- This allows to use two Unix group access control modes:
