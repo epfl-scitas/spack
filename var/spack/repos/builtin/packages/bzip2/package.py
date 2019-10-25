@@ -13,13 +13,10 @@ class Bzip2(Package):
     compressors), whilst being around twice as fast at compression
     and six times faster at decompression."""
 
-    # FIXME: The bzip.org domain has expired:
-    # https://lwn.net/Articles/762264/
-    # This package will need to be updated when a new home is found.
     homepage = "https://sourceware.org/bzip2/"
-    url      = "https://fossies.org/linux/misc/bzip2-1.0.6.tar.gz"
+    url      = "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"
 
-    version('1.0.6', '00b516f4704d4a7cb50a1d97e6e8e15b')
+    version('1.0.6', sha256='a2848f34fcd5d6cf47def00461fcb528a0484d8edef8208d6d2e2909dc61d9cd')
 
     variant('shared', default=True, description='Enables the build of shared libraries.')
 
