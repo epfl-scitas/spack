@@ -23,6 +23,7 @@ class Ppl(Package):
     homepage = "http://bugseng.com/products/ppl/"
     url      = "http://bugseng.com/products/ppl/download/ftp/releases/1.1/ppl-1.1.tar.gz"
 
+    version('1.2', sha256='6bc36dd4a87abc429d8f9c00c53e334e5041a9b0857cfc00dbad6ef14294aac8')
     version('1.1', '4f2422c0ef3f409707af32108deb30a7')
 
     depends_on("gmp")
