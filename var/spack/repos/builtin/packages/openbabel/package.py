@@ -13,9 +13,12 @@ class Openbabel(CMakePackage):
     solid-state materials, biochemistry, or related areas."""
 
     homepage = "http://openbabel.org/wiki/Main_Page"
-    url      = "https://sourceforge.net/projects/openbabel/files/openbabel/2.4.1/openbabel-2.4.1.tar.gz"
+    url      = 'https://github.com/openbabel/openbabel/releases/download/openbabel-3-0-0/openbabel-3.0.0-source.tar.bz2'
 
-    version('2.4.1', 'd9defcd7830b0592fece4fe54a137b99')
+    version('3.0.0', sha256='aad58ef8deaea9f58faeecb333f87bb18e0bdf4854e3a3b188a814a8c4517259')
+    version('2.4.1', 'd9defcd7830b0592fece4fe54a137b99',
+            url='https://sourceforge.net/projects/openbabel/files/openbabel/2.4.1/openbabel-2.4.1.tar.gz'
+    )
 
     variant('python', default=True, description='Build Python bindings')
 
@@ -28,6 +31,7 @@ class Openbabel(CMakePackage):
     depends_on('eigen@3.0:')  # required if using the language bindings
     depends_on('libxml2')     # required to read/write CML files, XML formats
     depends_on('zlib')        # required to support reading gzipped files
+    depends_on('boost')       # required to support Maestro file formats
 
     # Needed for Python 3.6 support
     patch('python-3.6-rtld-global.patch', when='@:2.4.1+python')
