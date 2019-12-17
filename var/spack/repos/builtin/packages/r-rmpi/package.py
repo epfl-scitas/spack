@@ -21,7 +21,7 @@ class RRmpi(RPackage):
     # The following MPI types are not supported
     conflicts('^intel-mpi')
     conflicts('^intel-parallel-studio')
-    conflicts('^mvapich2')
+    #conflicts('^mvapich2')
     conflicts('^spectrum-mpi')
 
     def configure_args(self):
@@ -31,14 +31,16 @@ class RRmpi(RPackage):
 
         # The type of MPI. Supported values are:
         # OPENMPI, LAM, MPICH, MPICH2, or CRAY
-        if mpi_name == 'openmpi':
-            rmpi_type = 'OPENMPI'
-        elif mpi_name == 'mpich':
-            rmpi_type = 'MPICH2'
-        else:
+        rmpi_type = {
+            'openmpi': 'OPENMPI',
+            'mpich': 'MPICH2',
+            'mvapich2': 'MPICH2'
+        }
+
+        if mpi_name not in rmpi_type:
             raise InstallError('Unsupported MPI type')
 
         return [
-            '--with-Rmpi-type={0}'.format(rmpi_type),
+            '--with-Rmpi-type={0}'.format(rmpi_type[mpi_name]),
             '--with-mpi={0}'.format(spec['mpi'].prefix),
         ]
