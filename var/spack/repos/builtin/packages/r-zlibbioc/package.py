@@ -15,9 +15,12 @@ class RZlibbioc(RPackage):
 
     homepage = "http://bioconductor.org/packages/release/bioc/html/zlibbioc.html"
     git      = "https://git.bioconductor.org/packages/zlibbioc.git"
+    url      = "https://bioconductor.org/packages/3.10/bioc/src/contrib/zlibbioc_1.32.0.tar.gz"
 
+    version('1.32.0', sha256='b2c583788196b883a78c5d2d15f887ae3d6f24dba92fabaafe55180eacc207f6')
     version('1.26.0', commit='2e3ab097caa09a5e3ddaa3469b13e19a7224da0d')
     version('1.22.0', commit='30377f830af2bc1ff17bbf3fdd2cb6442015fea5')
 
     depends_on('r@3.4.0:3.4.9', when='@1.22.0', type=('build', 'run'))
     depends_on('r@3.5.0:3.5.9', when='@1.26.0', type=('build', 'run'))
+    depends_on('r@3.6:', when='@1.32.0', type=('build', 'run'))

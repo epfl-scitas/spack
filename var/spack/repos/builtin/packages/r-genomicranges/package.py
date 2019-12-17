@@ -20,22 +20,27 @@ class RGenomicranges(RPackage):
 
     homepage = "https://bioconductor.org/packages/GenomicRanges/"
     git      = "https://git.bioconductor.org/packages/GenomicRanges.git"
+    url      = "https://bioconductor.org/packages/3.10/bioc/src/contrib/GenomicRanges_1.38.0.tar.gz"
 
+    version('1.38.0', sha256='a0aca57e4a893f4e669380dfea626dfdce413cc460d5d189774dcaa3b9d1ad75')
     version('1.32.6', commit='31426be0fd6b76f7858971dc45aaf6e6d1dbac4e')
     version('1.30.3', commit='e99979054bc50ed8c0109bc54563036c1b368997')
     version('1.28.6', commit='197472d618f3ed04c795dc6ed435500c29619563')
 
     depends_on('r-biocgenerics@0.21.2:', type=('build', 'run'))
-    depends_on('r-biocgenerics@0.25.3:', when='@1.32.6', type=('build', 'run'))
+    depends_on('r-biocgenerics@0.25.3:', when='@1.32.6:', type=('build', 'run'))
     depends_on('r-s4vectors@0.9.47:', type=('build', 'run'))
     depends_on('r-s4vectors@0.17.32:', when='@1.32.6', type=('build', 'run'))
+    depends_on('r-s4vectors@0.23.29:', when='@1.38.0', type=('build', 'run'))
     depends_on('r-iranges@2.9.11:', when='@1.28.6', type=('build', 'run'))
     depends_on('r-iranges@2.11.16:', when='@1.30.3', type=('build', 'run'))
     depends_on('r-iranges@2.14.4:', when='@1.32.6', type=('build', 'run'))
+    depends_on('r-iranges@2.19.9:', when='@1.38.0', type=('build', 'run'))
     depends_on('r-genomeinfodb@1.11.5:', when='@1.28.6', type=('build', 'run'))
     depends_on('r-genomeinfodb@1.13.1:', when='@1.30.3', type=('build', 'run'))
-    depends_on('r-genomeinfodb@1.15.2:', when='@1.32.6', type=('build', 'run'))
+    depends_on('r-genomeinfodb@1.15.2:', when='@1.32.6:', type=('build', 'run'))
     depends_on('r-xvector', type=('build', 'run'))
-    depends_on('r-xvector@0.19.8:', when='@1.32.6', type=('build', 'run'))
+    depends_on('r-xvector@0.19.8:', when='@1.32.6:', type=('build', 'run'))
     depends_on('r@3.4.0:3.4.9', when='@1.28.6', type=('build', 'run'))
     depends_on('r@3.5.0:3.5.9', when='@1.32.6', type=('build', 'run'))
+    depends_on('r@2.10:', when='@1.38.0', type=('build', 'run'))

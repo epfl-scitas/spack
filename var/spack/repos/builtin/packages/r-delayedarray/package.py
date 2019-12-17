@@ -25,7 +25,9 @@ class RDelayedarray(RPackage):
 
     homepage = "https://bioconductor.org/packages/DelayedArray/"
     git      = "https://git.bioconductor.org/packages/DelayedArray.git"
+    url      = "https://bioconductor.org/packages/3.10/bioc/src/contrib/DelayedArray_0.12.0.tar.gz"
 
+    version('0.12.0', sha256='18306a109ef097b7a4539cbdcc32fb8d95f3a67a18bb0ee5167889b75eb0490c')
     version('0.6.5', commit='7d1cb6477cb024c38bf1ee0c9155e010249ed94e')
     version('0.4.1', commit='ffe932ef8c255614340e4856fc6e0b44128a27a1')
     version('0.2.7', commit='909c2ce1665ebae2543172ead50abbe10bd42bc4')
@@ -33,11 +35,15 @@ class RDelayedarray(RPackage):
     depends_on('r-biocparallel', when='@0.6.5:', type=('build', 'run'))
     depends_on('r-biocgenerics', type=('build', 'run'))
     depends_on('r-biocgenerics@0.25.1:', when='@0.6.5', type=('build', 'run'))
+    depends_on('r-biocgenerics@0.31.5:', when='@0.12.0:', type=('build', 'run'))
     depends_on('r-s4vectors@0.14.3:', when='@0.2.7', type=('build', 'run'))
     depends_on('r-s4vectors@0.15.3:', when='@0.4.1', type=('build', 'run'))
     depends_on('r-s4vectors@0.17.43:', when='@0.6.5', type=('build', 'run'))
+    depends_on('r-s4vectors@0.21.7:', when='@0.12.0', type=('build', 'run'))
     depends_on('r-iranges', type=('build', 'run'))
     depends_on('r-iranges@2.11.17:', when='@0.4.1:', type=('build', 'run'))
+    depends_on('r-iranges@2.17.3:', when='@0.12.0:', type=('build', 'run'))
     depends_on('r-matrixstats', type=('build', 'run'))
     depends_on('r@3.4.0:3.4.9', when='@0.2.7', type=('build', 'run'))
     depends_on('r@3.5.0:3.5.9', when='@0.6.5', type=('build', 'run'))
+    depends_on('r@3.4.0:', when='@0.12.0', type=('build', 'run'))
