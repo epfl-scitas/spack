@@ -128,6 +128,8 @@ class Petsc(Package):
             description='Activates support for Saws')
     variant('libyaml', default=False,
             description='Activates support for YAML')
+    variant('spai', default=False,
+            description='Enable the Sparse Approximate Inverse method as a preconditioner')
 
     # 3.8.0 has a build issue with MKL - so list this conflict explicitly
     conflicts('^intel-mkl', when='@3.8.0')
@@ -248,6 +250,14 @@ class Petsc(Package):
     depends_on('p4est+mpi', when='+p4est+mpi')
     depends_on('saws', when='+saws')
     depends_on('libyaml', when='+libyaml')
+
+    resource(name='spai',
+             expand=False,
+	     url='https://www.mcs.anl.gov/petsc/mirror/externalpackages/spai-3.0-p1.tar.gz',
+             version='3.0-p1',
+             sha256='089cd5b343f42ad3ab523e1a8d26d19e0fd3399f227c8376e2d5aa99a96bca8e',
+             when='+spai')
+
 
     def url_for_version(self, version):
         if version >= Version('3.13.0'):
@@ -424,6 +434,16 @@ class Petsc(Package):
             ])
         else:
             options.append('--with-zlib=0')
+
+        if '+spai' in spec:
+            options.extend([
+                '--download-spai=%s' % self.stage[1].archive_file
+            ])
+            # the configure proccess will copy the spai files
+            os.makedirs(self.prefix.include)
+            os.makedirs(self.prefix.lib)
+        else:
+            options.append('--with-spai=0')
 
         python('configure', '--prefix=%s' % prefix, *options)
 
