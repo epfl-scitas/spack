@@ -176,6 +176,7 @@ class Petsc(Package):
     depends_on('cuda', when='+cuda')
 
     # Build dependencies
+    depends_on('gmake@3.81:', type='build', when='@3.13:')
     depends_on('python@2.6:2.8', type='build', when='@:3.10.99')
     depends_on('python@2.6:2.8,3.4:', type='build', when='@3.11:')
 
@@ -444,6 +445,15 @@ class Petsc(Package):
             os.makedirs(self.prefix.lib)
         else:
             options.append('--with-spai=0')
+
+        if '+cuda' in spec:
+            options.extend([
+                '--CUDAFLAGS=-ccbin %s -Xcompiler=-Wno-cpp' % os.environ['CC'],
+            ])
+            if not '+debug' in spec:
+                options.append('CUDAOPTFLAGS=--optimize=2')
+            else:
+                options.append('CUDAOPTFLAGS=')
 
         python('configure', '--prefix=%s' % prefix, *options)
 
