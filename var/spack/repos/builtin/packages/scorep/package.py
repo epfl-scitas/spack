@@ -34,10 +34,12 @@ class Scorep(AutotoolsPackage):
     variant('shmem', default=False, description='Enable shmem tracing')
     variant('unwind', default=False,
             description="Enable sampling via libunwind and lib wrapping")
+    variant('cuda', default=False, description="Enable CUDA support")
 
     # Dependencies for SCORE-P are quite tight. See the homepage for more
     # information. Starting with scorep 4.0 / cube 4.4, Score-P only depends on
     # two components of cube -- cubew and cubelib.
+
 
     # SCOREP 6
     depends_on('otf2@2.2:', when='@6:')
@@ -65,9 +67,11 @@ class Scorep(AutotoolsPackage):
 
     depends_on('mpi', when="+mpi")
     depends_on('papi', when="+papi")
+    depends_on('libunwind', when="+papi")
     depends_on('pdt', when="+pdt")
     depends_on('llvm', when="+unwind")
     depends_on('libunwind', when="+unwind")
+    depends_on('cuda', when="+cuda")
 
     # Score-P requires a case-sensitive file system, and therefore
     # does not work on macOS
@@ -96,6 +100,7 @@ class Scorep(AutotoolsPackage):
             config_args.append("--with-papi-header=%s" %
                                spec['papi'].prefix.include)
             config_args.append("--with-papi-lib=%s" % spec['papi'].prefix.lib)
+            config_args.append("--with-libunwind=%s" % spec['libunwind'].prefix)
 
         if "+pdt" in spec:
             config_args.append("--with-pdt=%s" % spec['pdt'].prefix.bin)
@@ -113,6 +118,17 @@ class Scorep(AutotoolsPackage):
             config_args.append('--with-mpi=mpich3')
         elif spec.satisfies('^openmpi'):
             config_args.append('--with-mpi=openmpi')
+
+        if spec.satisfies('+cuda'):
+            config_args.extend([
+                '--enable-cuda',
+                '--with-cudart=%s' % spec['cuda'].prefix,
+                '--with-cupti-include=%s' % join_path(spec['cuda'].prefix, 'extras/CUPTI/include/cupti.h'),
+                '--with-cupti-lib=%s' % join_path(spec['cuda'].prefix, 'extras/CUPTI/lib64/libcupti.so'),
+            ])
+
+        if spec.satisfies('+openacc'):
+            config_args.append('--enable-openacc')
 
         config_args.extend([
             'CFLAGS={0}'.format(self.compiler.cc_pic_flag),
