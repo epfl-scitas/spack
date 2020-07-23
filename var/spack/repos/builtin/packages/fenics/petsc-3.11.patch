@@ -1,0 +1,43 @@
+From 754634e87310e5a7ee4f963acafb4523dbfbce60 Mon Sep 17 00:00:00 2001
+From: "Jack S. Hale" <mail@jackhale.co.uk>
+Date: Fri, 26 Apr 2019 09:30:59 +0200
+Subject: [PATCH] Revert "patch for future PETSc 3.11"
+
+This reverts commit 8e92f6ee1bb004ab95d9f0788eab25a2b7c45010.
+---
+ dolfin/la/PETScOptions.h  | 2 +-
+ dolfin/la/PETScVector.cpp | 4 ----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/dolfin/la/PETScOptions.h b/dolfin/la/PETScOptions.h
+index 5ae24e6..37e5054 100644
+--- a/dolfin/la/PETScOptions.h
++++ b/dolfin/la/PETScOptions.h
+@@ -22,7 +22,7 @@
+ 
+ #include <string>
+ #include <boost/lexical_cast.hpp>
+-#include <petscsys.h>
++#include <petscoptions.h>
+ #include <dolfin/common/SubSystemsManager.h>
+ #include <dolfin/log/log.h>
+ #include "PETScObject.h"
+diff --git a/dolfin/la/PETScVector.cpp b/dolfin/la/PETScVector.cpp
+index 1bfc83f..69e1795 100644
+--- a/dolfin/la/PETScVector.cpp
++++ b/dolfin/la/PETScVector.cpp
+@@ -749,11 +749,7 @@ void PETScVector::gather(GenericVector& y,
+ 
+   // Perform scatter
+   VecScatter scatter;
+-#if PETSC_VERSION_GE(3,11,0)
+-  ierr = VecScatterCreateWithData(_x, from, _y.vec(), to, &scatter);
+-#else
+   ierr = VecScatterCreate(_x, from, _y.vec(), to, &scatter);
+-#endif
+   CHECK_ERROR("VecScatterCreate");
+   ierr = VecScatterBegin(scatter, _x, _y.vec(), INSERT_VALUES,
+                          SCATTER_FORWARD);
+-- 
+2.10.5
+

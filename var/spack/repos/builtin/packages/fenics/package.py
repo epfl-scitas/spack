@@ -18,8 +18,6 @@ class Fenics(CMakePackage):
     url      = "https://bitbucket.org/fenics-project/dolfin/downloads/dolfin-1.6.0.tar.gz"
     base_url = "https://bitbucket.org/fenics-project/{pkg}/downloads/{pkg}-{version}.tar.gz"
 
-    python_components = ['ufl', 'ffc', 'fiat', 'instant']
-
     variant('hdf5',         default=True,  description='Compile with HDF5')
     variant('parmetis',     default=True,  description='Compile with ParMETIS')
     variant('scotch',       default=True,  description='Compile with Scotch')
@@ -50,7 +48,8 @@ class Fenics(CMakePackage):
 
     patch('petsc-3.7.patch', when='@1.6.1^petsc@3.7:')
     patch('petsc-version-detection.patch', when='@:1.6.1')
-    patch('hdf5~cxx-detection.patch')
+    patch('hdf5~cxx-detection.patch', when='@:2016.1.0')
+    patch('petsc-3.11.patch', when='@2019.1.0^petsc@:3.11.99')
 
     extends('python')
 
@@ -81,9 +80,17 @@ class Fenics(CMakePackage):
     depends_on('py-setuptools', type='build')
     depends_on('py-sphinx@1.0.1:', when='+doc', type='build')
 
-    releases = [
-        {
-            'version': '2016.1.0',
+    releases = {
+        '2019.1.0': {
+            'md5': '789b46afd03c777f66f44ff26c714f1f',
+            'resources': {
+                'fiat': 'c8b7b0fc70adad0ef9338d2c487337c9',
+                'ufl': 'fd14f186fce0caf2a9183f169331e6ee',
+                'dijitso': 'e66414b8a07e0a748aa6e725d70b0ce4',
+                'ffc': '53f7af75dab2da5a1f1bf0cfea982310',
+            }
+        },
+        '2016.1.0': {
             'md5': '92e8d00f6487a575987201f0b0d19173',
             'resources': {
                 'ffc': '35457ae164e481ba5c9189ebae060a47',
@@ -92,8 +99,7 @@ class Fenics(CMakePackage):
                 'ufl': '37433336e5c9b58d1d5ab4acca9104a7',
             }
         },
-        {
-            'version': '1.6.0',
+        '1.6.0': {
             'md5': '35cb4baf7ab4152a40fb7310b34d5800',
             'resources': {
                 'ffc': '358faa3e9da62a1b1a717070217b793e',
@@ -102,8 +108,7 @@ class Fenics(CMakePackage):
                 'ufl': 'c40c5f04eaa847377ab2323122284016',
             }
         },
-        {
-            'version': '1.5.0',
+        '1.5.0': {
             'md5': '9b589a3534299a5e6d22c13c5eb30bb8',
             'resources': {
                 'ffc': '343f6d30e7e77d329a400fd8e73e0b63',
@@ -112,17 +117,19 @@ class Fenics(CMakePackage):
                 'ufl': '130d7829cf5a4bd5b52bf6d0955116fd',
             }
         },
-    ]
+    }
 
-    for release in releases:
-        version(release['version'], release['md5'], url=base_url.format(
-            pkg='dolfin', version=release['version']))
+    for v, release in releases.items():
+        version(v, release['md5'], url=base_url.format(
+            pkg='dolfin', version=v))
         for name, md5 in release['resources'].items():
             resource(name=name,
-                     url=base_url.format(pkg=name, **release),
+                     url=base_url.format(pkg=name,
+                                         version=v,
+                                         **release),
                      md5=md5,
                      destination='depends',
-                     when='@{version}'.format(**release),
+                     when='@{0}'.format(v),
                      placement=name)
 
     def cmake_is_on(self, option):
@@ -173,14 +180,10 @@ class Fenics(CMakePackage):
                 self.cmake_is_on('zlib')),
         ]
 
-    @run_after('build')
+    @run_before('cmake')
     def build_python_components(self):
-        for package in self.python_components:
+        str_version = str(self.spec.version)
+        for package in self.releases[str_version]['resources'].keys():
             with working_dir(join_path('depends', package)):
                 setup_py('build')
-
-    @run_after('install')
-    def install_python_components(self):
-        for package in self.python_components:
-            with working_dir(join_path('depends', package)):
                 setup_py('install', '--prefix={0}'.format(self.prefix))
