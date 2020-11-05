@@ -25,6 +25,7 @@ class Gurobi(Package):
     homepage = "http://www.gurobi.com/index"
 
     version('7.5.2', '01f6dbb8d165838cca1664a1a14e4a85')
+    version('9.1.0', '628c4e2c6fc34193f9dd5852d34b3e1b')
 
     # Licensing
     license_required = True
