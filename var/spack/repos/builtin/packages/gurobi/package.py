@@ -23,7 +23,7 @@ class Gurobi(Package):
 
     homepage = "http://www.gurobi.com/index"
 
-    version('9.1.0', '628c4e2c6fc34193f9dd5852d34b3e1b')
+    version('9.1.0', sha256='92e2d8972d3f0edec9c35eb5a7d5bd50390c5526a04aef50d771d2dd9d94a16a')
     version('8.1.1', sha256='c030414603d88ad122246fe0e42a314fab428222d98e26768480f1f870b53484')
     version('7.5.2', sha256='d2e6e2eb591603d57e54827e906fe3d7e2e0e1a01f9155d33faf5a2a046d218e')
 
