@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack import *
-import os
 
 
 class Gurobi(Package):
@@ -24,18 +23,26 @@ class Gurobi(Package):
 
     homepage = "http://www.gurobi.com/index"
 
-    version('7.5.2', '01f6dbb8d165838cca1664a1a14e4a85')
+    version('9.1.0', sha256='92e2d8972d3f0edec9c35eb5a7d5bd50390c5526a04aef50d771d2dd9d94a16a')
+    version('8.1.1', sha256='c030414603d88ad122246fe0e42a314fab428222d98e26768480f1f870b53484')
+    version('7.5.2', sha256='d2e6e2eb591603d57e54827e906fe3d7e2e0e1a01f9155d33faf5a2a046d218e')
 
     # Licensing
     license_required = True
+    license_files    = ['gurobi.lic']
     license_vars     = ['GRB_LICENSE_FILE']
     license_url      = 'http://www.gurobi.com/downloads/download-center'
 
     def url_for_version(self, version):
-        return "file://{0}/gurobi{1}_linux64.tar.gz".format(os.getcwd(), version)
-
-    def setup_environment(self, spack_env, run_env):
-        run_env.set('GUROBI_HOME', self.prefix)
+        url = "https://packages.gurobi.com/{0}/gurobi{1}_linux64.tar.gz"
+        return url.format(version.up_to(2), version)
 
     def install(self, spec, prefix):
-        install_tree('linux64', prefix)
+        install_tree('linux64', join_path(prefix, 'linux64'))
+
+    def setup_environment(self, spack_env, run_env):
+        run_env.set('GRB_LICENSE_FILE', join_path(prefix, 'gurobi.lic'))
+        run_env.set('GUROBI_HOME', join_path(prefix, 'linux64'))
+        run_env.prepend_path('PATH', join_path(prefix, 'linux64', 'bin'))
+        run_env.prepend_path('LD_LIBRARY_PATH', join_path(prefix, 'linux64',
+                                                          'lib'))
