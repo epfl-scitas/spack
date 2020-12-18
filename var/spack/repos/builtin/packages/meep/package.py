@@ -26,7 +26,10 @@ class Meep(AutotoolsPackage):
     variant('lapack',  default=True, description='Enable LAPACK support')
     variant('harminv', default=True, description='Enable Harminv support')
     variant('guile',   default=True, description='Enable Guilde support')
-    variant('libctl',  default=True, description='Enable libctl support')
+    # this is not optional since it is a dependency of the scheme and python
+    # interfaces that cannot rely by turned of
+    # https://github.com/NanoComp/meep/blob/5ceb8ca73ec4c2113e47fcea07de70c184258d44/scheme/Makefile.am#L37
+    # variant('libctl', default=True, description='Enable libctl support')
     variant('mpi',     default=True, description='Enable MPI support')
     variant('hdf5',    default=True, description='Enable HDF5 support')
     variant('gsl',     default=True, description='Enable GSL support')
@@ -39,18 +42,33 @@ class Meep(AutotoolsPackage):
     depends_on('lapack',      when='+lapack')
     depends_on('harminv',     when='+harminv')
     depends_on('guile',       when='+guile')
-    depends_on('libctl@3.2:', when='+libctl')
+    # according to the documentation meep need still depends on libctl @4.0: but
+    # according to the configure it is @4.2:
+    # https://github.com/NanoComp/meep/commit/97f4df0453417ff5b3876524845cc80b79f835e7
+    depends_on('libctl@4.2:', when='@1.6.2:')
+    depends_on('libctl@3.2:', when='@:1.6.1')
     depends_on('mpi',         when='+mpi')
     depends_on('hdf5~mpi',    when='+hdf5~mpi')
     depends_on('hdf5+mpi',    when='+hdf5+mpi')
     depends_on('gsl',         when='+gsl')
+
     depends_on('mpb')
     depends_on('swig')
-
+    # python is not a variant of this package but is someone wants to do it
+    # mpb is required by default since the swig code does not compiles
+    # without it it might be optional if python is optional
+    #
+    # `--with-python` is also a default of the configure
     extends('python')
     depends_on('py-numpy', type=('build', 'link', 'run'))
 
     # build in source fails do to symlink of a file created (materials.scm...)
+    # this comes from
+    # https://github.com/NanoComp/meep/commit/0f483e2f51fd5eaee92c5d6595f9026042daea61
+    # that if configure in source earse the file to replace it by a symlink on
+    # itself and produce the bug https://github.com/NanoComp/meep/issues/837
+    # that was reported by a spack user a discarded by the developers as s
+    # system problem and not a bug
     @property
     def build_directory(self):
         return os.path.join(self.stage.path, 'spack-build')
@@ -90,9 +108,10 @@ class Meep(AutotoolsPackage):
         else:
             config_args.append('--without-hdf5')
 
-        # make meep-python fail to compile
-        # config_args.append('--without-scheme')
-        # --with-scheme need maintainer mode...
+        # `--with-scheme` need maintainer mode to compile and is on by default
+        # https://github.com/NanoComp/meep/blob/5ceb8ca73ec4c2113e47fcea07de70c184258d44/scheme/Makefile.am#L32
+        # `--without-scheme` is not an option since it make the compilation fail
+        # with some swig errors
         config_args.append('--enable-maintainer-mode')
 
         return config_args
