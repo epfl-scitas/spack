@@ -42,11 +42,13 @@ class Meep(AutotoolsPackage):
     depends_on('lapack',      when='+lapack')
     depends_on('harminv',     when='+harminv')
     depends_on('guile',       when='+guile')
-    # according to the documentation meep need still depends on libctl @4.0: but
+    # according to the documentation meep need depends on libctl @4.0: but
     # according to the configure it is @4.2:
     # https://github.com/NanoComp/meep/commit/97f4df0453417ff5b3876524845cc80b79f835e7
-    depends_on('libctl@4.2:', when='@1.6.2:')
-    depends_on('libctl@3.2:', when='@:1.6.1')
+    depends_on('libctl@4.2:', when='@1.8.0:')
+    depends_on('libctl@4.1:', when='@1.5.0:1.7.0')
+    depends_on('libctl@4.0:', when='@1.4.0:1.4.3')
+    depends_on('libctl@3.2:', when='@:1.3')
     depends_on('mpi',         when='+mpi')
     depends_on('hdf5~mpi',    when='+hdf5~mpi')
     depends_on('hdf5+mpi',    when='+hdf5+mpi')
