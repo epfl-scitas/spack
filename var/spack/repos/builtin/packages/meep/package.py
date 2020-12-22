@@ -27,7 +27,7 @@ class Meep(AutotoolsPackage):
     variant('harminv', default=True, description='Enable Harminv support')
     variant('guile',   default=True, description='Enable Guilde support')
     # this is not optional since it is a dependency of the scheme and python
-    # interfaces that cannot rely by turned of
+    # interfaces that cannot really by turned off
     # https://github.com/NanoComp/meep/blob/5ceb8ca73ec4c2113e47fcea07de70c184258d44/scheme/Makefile.am#L37
     # variant('libctl', default=True, description='Enable libctl support')
     variant('mpi',     default=True, description='Enable MPI support')
