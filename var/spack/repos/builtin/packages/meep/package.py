@@ -65,10 +65,11 @@ class Meep(AutotoolsPackage):
     # build in source fails do to symlink of a file created (materials.scm...)
     # this comes from
     # https://github.com/NanoComp/meep/commit/0f483e2f51fd5eaee92c5d6595f9026042daea61
-    # that if configure in source earse the file to replace it by a symlink on
-    # itself and produce the bug https://github.com/NanoComp/meep/issues/837
-    # that was reported by a spack user a discarded by the developers as s
-    # system problem and not a bug
+    # if configure is done in the source tree it tries to replace the file
+    # with by a symlink to itself, this results in bug:
+    # https://github.com/NanoComp/meep/issues/837
+    # that was reported by a spack user but discarded by the developers
+    # as a system problem and not a bug
     @property
     def build_directory(self):
         return os.path.join(self.stage.path, 'spack-build')
