@@ -113,8 +113,8 @@ class Meep(AutotoolsPackage):
 
         # `--with-scheme` need maintainer mode to compile and is on by default
         # https://github.com/NanoComp/meep/blob/5ceb8ca73ec4c2113e47fcea07de70c184258d44/scheme/Makefile.am#L32
-        # `--without-scheme` is not an option since it makes the compilation fail
-        # with some swig errors
+        # `--without-scheme` is not an option since it makes the compilation 
+        # failt with some swig errors
         config_args.append('--enable-maintainer-mode')
 
         return config_args
