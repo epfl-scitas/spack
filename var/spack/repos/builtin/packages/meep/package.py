@@ -57,7 +57,7 @@ class Meep(AutotoolsPackage):
     depends_on('mpb')
     depends_on('swig')
     # python is not a variant of this package but is someone wants to do it
-    # mpb is required by default since the swig code does not compiles
+    # mpb is required by default since the swig code does not compile
     # without it. It might be optional if python is optional
     #
     # `--with-python` is also a default of the configure
