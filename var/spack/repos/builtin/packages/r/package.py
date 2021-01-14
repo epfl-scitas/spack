@@ -20,6 +20,7 @@ class R(AutotoolsPackage):
 
     extendable = True
 
+    version('4.0.3', sha256='09983a8a78d5fb6bc45d27b1c55f9ba5265f78fa54a55c13ae691f87c5bb9e0d')
     version('3.6.0', sha256='36fcac3e452666158e62459c6fc810adc247c7109ed71c5b6c3ad5fc2bf57509')
     version('3.5.3', sha256='2bfa37b7bd709f003d6b8a172ddfb6d03ddd2d672d6096439523039f7a8e678c')
     version('3.5.2', sha256='e53d8c3cf20f2b8d7a9c1631b6f6a22874506fb392034758b3bb341c586c5b62')
@@ -83,6 +84,12 @@ class R(AutotoolsPackage):
         'Makeconf', relative_root=os.path.join('rlib', 'R', 'etc')
     )
 
+    # R custom URL version
+    def url_for_version(self, version):
+        """Handle R's customed URL versions"""
+        url = 'https://cloud.r-project.org/src/base'
+        return url + '/R-%s/R-%s.tar.gz' % (version.up_to(1), version)
+
     @property
     def etcdir(self):
         return join_path(prefix, 'rlib', 'R', 'etc')
@@ -99,6 +106,7 @@ class R(AutotoolsPackage):
             '--enable-R-shlib',
             '--enable-BLAS-shlib',
             '--enable-R-framework=no',
+            '--with-pcre1',
             '--with-tcl-config={0}'.format(tcl_config_path),
             '--with-tk-config={0}'.format(tk_config_path),
         ]
