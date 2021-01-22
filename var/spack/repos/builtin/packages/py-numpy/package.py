@@ -197,6 +197,17 @@ class PyNumpy(PythonPackage):
             if spec['python'].version < Version('3.5'):
                 args = ['-j', str(make_jobs)]
 
+        filter_file(
+            r'output = subprocess.check_output(version_cmd)',
+            r'output = subprocess.check_output(version_cmd, stderr=subprocess.STDOUT)', # noqa
+            'numpy/distutils/ccompiler.py',
+            string=True
+        )
+        compilers = {'intel': 'intelem', 'gcc': 'gnu95'}
+        compiler = compilers[spec.compiler.name]
+        args.append('--fcompiler={}'.format(compiler))
+        args.append('--compiler={}'.format(compiler))
+
         return args
 
     def setup_environment(self, spack_env, run_env):
